@@ -9,19 +9,29 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 @SuppressWarnings("deprecation")
 @Configuration
-public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
-	
+public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.inMemoryAuthentication().withUser("arif").password("pass@1234").roles("ADMIN");
 	}
-	
+
+	// security based on URL
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable();
-		http.authorizeRequests().anyRequest().fullyAuthenticated().and().httpBasic();
+		http.authorizeRequests().antMatchers("/rest/**").fullyAuthenticated().and().httpBasic();
 	}
-	
+
+	// security for all API
+	/*
+	 * @Override protected void configure(HttpSecurity http) throws Exception {
+	 * http.csrf().disable();
+	 * http.authorizeRequests().anyRequest().fullyAuthenticated().and().httpBasic();
+	 * }
+	 */
+
 	@Bean
 	public static NoOpPasswordEncoder passwordEncoder() {
 		return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
